@@ -1,0 +1,239 @@
+{
+	"tv": {
+		"kan": {
+			"11": "https://kan11.media.kan.org.il/hls/live/2024514/2024514/master.m3u8",
+			"11c": "https://kan11sub.media.kan.org.il/hls/live/2024678/2024678/master.m3u8",
+			"23": "https://kan23.media.kan.org.il/hls/live/2024691/2024691/master.m3u8",
+			"33": "https://makan.media.kan.org.il/hls/live/2024680/2024680/master.m3u8"
+		},
+		"keshet": {
+			"12": "https://www.mako.co.il/mako-vod-live-tv/VOD-6540b8dcb64fd31006.htm",
+			"12b": "vcmid=1e2258089b67f510VgnVCM2000002a0c10acRCRD&videoChannelId=d1d6f5dfc8517810VgnVCM100000700a10acRCRD",
+			"12c": "https://www.mako.co.il/mako-vod-live-tv/VOD-319a699f834e661006.htm",
+			"24": "https://www.mako.co.il/mako-vod-live-tv/VOD-b3480d2eff3fd31006.htm",
+			"2025": "https://www.mako.co.il/mako-vod-live-tv/VOD-7469dcd71dcb761006.htm"
+		},
+		"reshet": {
+			"13": {
+				"referer": "https://13tv.co.il/live/",
+				"link": "https://reshet.g-mana.live/media/87f59c77-03f6-4bad-a648-897e095e7360/mainManifest.m3u8"
+			},
+			"13b": {
+				"referer": "https://13tv.co.il/live/",
+				"link": "https://d18b0e6mopany4.cloudfront.net/out/v1/2f2bc414a3db4698a8e94b89eaf2da2a/index.m3u8"
+			},
+			"13b2": {
+				"klt": "1_pjrmtdaf",
+				"link": "https://d2xg1g9o5vns8m.cloudfront.net/out/v1/0855d703f7d5436fae6a9c7ce8ca5075/index.m3u8",
+				"referer": "https://13tv.co.il/allshows/2010263/"
+			},
+			"13c": {
+				"referer": "https://13tv.co.il/live/",
+				"link": "https://reshet.g-mana.live/media/4607e158-e4d4-4e18-9160-3dc3ea9bc677/mainManifest.m3u8"
+			},
+			"bb": {
+				"brv": "videoId",
+				"cst": "26",
+				"klt": "1_6fr5xbw2",
+				"referer": "https://13tv.co.il/home/bb-livestream/",
+				"link": "https://d2lckchr9cxrss.cloudfront.net/out/v1/c73af7694cce4767888c08a7534b503c/index.m3u8"
+			},
+			"13comedy": {
+				"klt": "adsadadas",
+				"link": "https://d15ds134q59udk.cloudfront.net/out/v1/fbba879221d045598540ee783b140fe2/index.m3u8",
+				"referer": "https://13tv.co.il/allshows/2605018/"
+			},
+			"13nofesh": {
+				"klt": "1_g7lqf2yg",
+				"link": "https://d1yd8hohnldm33.cloudfront.net/out/v1/19dee23c2cc24f689bd4e1288661ee0c/index.m3u8",
+				"referer": "https://13tv.co.il/allshows/2395628/"
+			},
+			"13reality": {
+				"klt": "1_khfzmmtx",
+				"link": "https://d2dffl3588mvfk.cloudfront.net/out/v1/d8e15050ca4148aab0ee387a5e2eb46b/index.m3u8",
+				"referer": "https://13tv.co.il/allshows/2395629/"
+			}
+		},
+		"14tv": {
+			"ch": "https://insight-api-channel14.univtec.com/cms/interface/channels/play?relations=true&filter=guid||$eq||b676b906-5625-48af-a331-11a5d22e151b",
+			"link": "https://ch14-channel14-content.akamaized.net/hls/live/2104807/CH14_CHANNEL14/master.m3u8"
+		},
+		"kabbalah": "http://kab.tv/api/streams",
+		"hidabroot": "https://www.hidabroot.org/live",
+		"knesset": {
+			"99": "https://kneset.gostreaming.tv/p2-kneset/_definst_/myStream/index.m3u8",
+			"99c": "https://kneset.gostreaming.tv/p2-Accessibility/_definst_/myStream/index.m3u8"
+		},
+		"sport5": {
+			"5studio": {
+				"ch": "studioUrl",
+				"link": "https://rgelive.akamaized.net/hls/live/2043151/radiolive/playlist.m3u8"
+			}
+		},
+		"walla": {
+			"link": "https://amg01742-walla-wallanews-ono-btlna.amagi.tv/playlist/amg01742-walla-wallanews-ono/playlist.m3u8"
+		},
+		"tv": {
+			"891fm": {
+				"link": "https://www.oles.tv/891fm/player/",
+				"regex": "streamSource\\s*=\\s*'(.*?)'"
+			},
+			"100fm": {
+				"link": "https://cdn.cybercdn.live/Radios_100FM/Video/playlist.m3u8"
+			},
+			"11b": {
+				"link": "http://kan11.media.kan.org.il/hls/live/2024514/2024514/source1_2.5k/chunklist.m3u8",
+				"final": true
+			},
+			"23b": {
+				"link": "https://kan23.media.kan.org.il/hls/live/2024691/2024691/source1_2.5k/chunklist.m3u8",
+				"final": true
+			},
+			"33b": {
+				"link": "https://makan.media.kan.org.il/hls/live/2024680/2024680/source1_2.5k/chunklist.m3u8",
+				"final": true
+			},
+			"bbb": {
+				"link": "https://d2lckchr9cxrss.cloudfront.net/out/v1/c73af7694cce4767888c08a7534b503c/index.m3u8",
+				"referer": "https://13tv.co.il/home/bb-livestream/",
+				"final": true
+			},
+			"musayof": {
+				"link": "http://wowza.media-line.co.il/Musayof-Live/livestream.sdp/playlist.m3u8",
+				"referer": "http://media-line.co.il/Media-Line-Player/musayof/livePlayer.aspx"
+			},
+			"ynet": {
+				"link": "https://ynet-live-01.ynet-pic1.yit.co.il/ynet/live.m3u8",
+				"final": true
+			},
+			"i24news": {
+				"link": "https://bcovlive-a.akamaihd.net/d89ede8094c741b7924120b27764153c/eu-central-1/5377161796001/playlist.m3u8"
+			},
+			"i24newsen": {
+				"link": "https://bcovlive-a.akamaihd.net/ecf224f43f3b43e69471a7b626481af0/eu-central-1/5377161796001/playlist.m3u8"
+			},
+			"i24newsfr": {
+				"link": "https://bcovlive-a.akamaihd.net/41814196d97e433fb401c5e632d985e9/eu-central-1/5377161796001/playlist.m3u8"
+			},
+			"i24newsar": {
+				"link": "https://bcovlive-a.akamaihd.net/95116e8d79524d87bf3ac20ba04241e3/eu-central-1/5377161796001/playlist.m3u8"
+			},
+			"10": {
+				"link": "https://r.il.cdn-redge.media/livehls/oil/calcala/live/channel10/live.livx/playlist.m3u8"
+			}
+		}
+	},
+	"radio": {
+		"glz": {
+			"glz": {
+				"rootId": "1051",
+				"live": "http://glzwizzlv.bynetcdn.com/glz_mp3?awCollectionId=misc&awEpisodeId=glz"
+			},
+			"glglz": {
+				"rootId": "1920",
+				"live": "http://glzwizzlv.bynetcdn.com/glglz_mp3?awCollectionId=misc&awEpisodeId=glglz"
+			}
+		},
+		"kan": {
+			"bet": "https://kanbet.media.kan.org.il/hls/live/2024811/2024811/playlist.m3u8",
+			"gimel": "https://kangimmel.media.kan.org.il/hls/live/2024813/2024813/playlist.m3u8",
+			"culture": "https://kantarbut.media.kan.org.il/hls/live/2024816/2024816/playlist.m3u8",
+			"88": "https://kan88.media.kan.org.il/hls/live/2024812/2024812/playlist.m3u8",
+			"moreshet": "https://kanmoreshet.media.kan.org.il/hls/live/2024814/2024814/playlist.m3u8",
+			"music": "https://kankolhamusica.media.kan.org.il/hls/live/2024817/2024817/playlist.m3u8",
+			"kankids": "https://kankids.media.kan.org.il/hls/live/2024820/2024820/playlist.m3u8",
+			"reka": "https://kanreka.media.kan.org.il/hls/live/2024815/2024815/playlist.m3u8",
+			"makan": "https://makanradio.media.kan.org.il/hls/live/2024818/2024818/playlist.m3u8"
+		},
+		"99fm": "http://eco-live.mediacast.co.il/99fm_aac",
+		"100fm": {
+			"ch": "http://digital.100fm.co.il/app/",
+			"link": "https://cdn.cybercdn.live/Radios_100FM/Audio/icecast.audio"
+		},
+		"101fm": {
+			"ch": "http://live1.co.il/jrs101fm/",
+			"link": "http://101.cdnwz.net/101fm",
+			"tunein": "http://opml.tunein.com/Tune.ashx?render=json&id={0}"
+		},
+		"sport5": {
+			"5live": {
+				"ch": "liveurl",
+				"link": "https://rgelive.akamaized.net/hls/live/2043150/radio5/playlist.m3u8"
+			}
+		},
+		"1064fm": {
+			"ch": "https://radio1064.co.il",
+			"link": "https://cdna.streamgates.net/TheBest/live/playlist.m3u8"
+		},
+		"radio": {
+			"90fm": {
+				"link": "http://live1.co.il/90fm/",
+				"regex": "mp3:\\s*\"(.*?)\""
+			},
+			"91fm": {
+				"link": "https://cdn.cybercdn.live/Lev_Hamedina/Audio/icecast.audio",
+				"final": true
+			},
+			"97fm": {
+				"link": "https://cdn.cybercdn.live/Darom_97FM/Live/icecast.audio",
+				"final": true
+			},
+			"891fm": {
+				"link": "http://www.891fm.co.il/",
+				"regex": "data-mp3=\"(.*?)\""
+			},
+			"1015fm": {
+				"link": "http://radio.2net.co.il/hatahana",
+				"regex": "width=\"100%\" src=\"(.*?)\""
+			},
+			"102fm": {
+				"link": "https://102fm.co.il/",
+				"regex": "src:\\s*'(.*?)'"
+			},
+			"102fmEilat": {
+				"link": "https://cdn.cybercdn.live/Eilat_Radio/Live/icecast.audio",
+				"final": true
+			},
+			"103fm": {
+				"link": "http://103fm.maariv.co.il/include/OnLineView.aspx",
+				"regex": "data-file=\"(.*?)\""
+			},
+			"1045fm": {
+				"link": "https://1045fm.maariv.co.il/include/OnLineView.aspx",
+				"regex": "data-file=\"(.*?)\""
+			},
+			"1075fm": {
+				"link": "https://1075.livecdn.biz/radiohaifa",
+				"final": true
+			},
+			"kolhay": {
+				"link": "https://media2.93fm.co.il/live-new",
+				"final": true
+			},
+			"kolhaymusic": {
+				"link": "https://media2.93fm.co.il/livemusic",
+				"final": true
+			},
+			"kolbarama": {
+				"link": "https://cdn.cybercdn.live/Kol_Barama/Live_Audio/icecast.audio",
+				"final": true
+			},
+			"kolplay": {
+				"link": "https://cdn.cybercdn.live/Kol_Barama/Music/icecast.audio",
+				"final": true
+			},
+			"gly": {
+				"link": "https://cdn.cybercdn.live/Galei_Israel/Live/icecast.audio",
+				"final": true
+			},
+			"mizrahit": {
+				"link": "https://mzr.mediacast.co.il/mzradio",
+				"final": true
+			},
+			"fm995": {
+				"link": "https://995.livecdn.biz/995fm",
+				"final": true
+			}
+		}
+	}
+}
