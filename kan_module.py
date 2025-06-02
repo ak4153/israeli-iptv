@@ -57,7 +57,7 @@ class KanProvider(BaseProvider):
     def _get_cached(self, url: str, ttl: int = None) -> str:
         """Get URL content with caching."""
         if ttl is None:
-            ttl = self.CACHE_TIME
+            ttl = self.LINK_CACHE_TIME
             
         # Check cache first
         cached = self._get_from_cache(url, ttl)

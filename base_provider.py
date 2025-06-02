@@ -45,8 +45,7 @@ class BaseProvider(ABC):
     )
     
     # Cache settings
-    CACHE_TIME = 60 * 60 * 4  # 4 hours for HTML/JSON cache
-    LINK_CACHE_TIME = 60 * 60  # 1 hour for resolved stream URLs
+    LINK_CACHE_TIME = 14 * 60  # 14 minutes for channel/VOD listings since Keshet is so dynamic
     
     def __init__(self, provider_name: str):
         """
@@ -225,13 +224,13 @@ class BaseProvider(ABC):
         
         Args:
             key: Cache key
-            ttl: Time to live in seconds (default: CACHE_TIME)
+            ttl: Time to live in seconds (default: LINK_CACHE_TIME)
             
         Returns:
             Cached value or None
         """
         if ttl is None:
-            ttl = self.CACHE_TIME
+            ttl = self.LINK_CACHE_TIME
             
         cache_entry = self._cache.get(key)
         if cache_entry and self._is_cache_valid(cache_entry, ttl):
@@ -263,6 +262,7 @@ class BaseProvider(ABC):
         """
         cache_entry = self._link_cache.get(key)
         if cache_entry and self._is_cache_valid(cache_entry, self.LINK_CACHE_TIME):
+            self.logger.info(f"Cache hit for {key} in link cache")
             return cache_entry.get('url')
         return None
     

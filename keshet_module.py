@@ -6,7 +6,7 @@ import time
 import uuid
 import logging
 import requests
-from urllib.parse import quote_plus, unquote_plus, urlparse, parse_qs
+from urllib.parse import quote_plus, unquote_plus, parse_qs
 from typing import List, Optional, Dict, Any
 
 from base_provider import BaseProvider, Channel, VOD
@@ -45,6 +45,23 @@ class KeshetProvider(BaseProvider):
     # Helper utilities (private methods)
     # ---------------------------------------------------------------------------
     
+    def get_master_url(self) -> str:
+        """
+        Get the master URL for the main Keshet channel.
+        This is used to resolve the main channel stream URL.
+        """
+        return self.resolve_url(
+            self.get_channels()[0].url,
+            prefer_http=True
+        )
+
+    @staticmethod
+    def extract_first_variant(master_text: str) -> str:
+        m = re.search(r'^(?!#)(.*index_2200\.m3u8)\s*$', master_text, re.MULTILINE)
+        if not m:
+            raise ValueError("No variant .m3u8 line found in master playlist.")
+        return m.group(1).strip()
+
     def _get(self, url: str, timeout: int = 30) -> Optional[requests.Response]:
         """Fetch URL with error handling."""
         try:
@@ -448,7 +465,7 @@ if __name__ == "__main__":
     provider = KeshetProvider()
     
     # Test resolving Keshet 12 channel
-    test_url = f"https://www.mako.co.il/mako-vod-keshet/the_traitors-s1/VOD-c901dc765866691027.htm"
+    test_url = f"https://www.mako.co.il/mako-vod-live-tv/VOD-6540b8dcb64fd31006.htm"
     
     # Try HTTP version first (preferred for TV compatibility)
     result = provider.resolve_url(test_url, prefer_http=True)
