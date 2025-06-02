@@ -139,9 +139,7 @@ def proxy_segment(ts_path):
     try:
         # 1) Fetch master to get current “hdntl=…” prefix:
         master_url = keshet_provider.get_master_url()
-        mresp = requests.get(master_url, timeout=5)
-        if mresp.status_code != 200:
-            return abort(502)
+        mresp = keshet_provider.get_master_url_with_cache()
 
         variant_rel = keshet_provider.extract_first_variant(mresp.text)
         
@@ -158,7 +156,7 @@ def proxy_segment(ts_path):
 
         # 3) Build the real TS URL with that prefix:
         real_ts_url = f"{scheme}://{netloc}{base_path}{ts_path}?{hdntl_prefix}"
-        print(f"[proxy_segment] Fetching TS URL:\n    {real_ts_url}")
+        logger.info(f"[proxy_segment] Fetching TS URL:\n    {real_ts_url}")
 
         # 4) Use Client.send(...) with stream=True (instead of get(..., stream=True)):
         client = httpx.Client(timeout=10.0, follow_redirects=True)
@@ -166,7 +164,7 @@ def proxy_segment(ts_path):
         upstream_resp = client.send(req, stream=True)
 
         if upstream_resp.status_code != 200:
-            print(f"[proxy_segment] Upstream TS returned {upstream_resp.status_code}")
+            logger.info(f"[proxy_segment] Upstream TS returned {upstream_resp.status_code}")
             return abort(upstream_resp.status_code)
 
         # 5) Return a streaming Response from upstream_resp.iter_bytes()
@@ -175,8 +173,8 @@ def proxy_segment(ts_path):
             content_type="video/MP2T"
         )
 
-    except Exception:
-        print("[proxy_segment] Caught exception:")
+    except Exception as e:
+        logger.error("[proxy_segment] Caught exception:%s", e)
         traceback.print_exc()
         return abort(502)
 

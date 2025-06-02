@@ -1,8 +1,7 @@
 # keshet_module.py
 import os
 import re
-import json
-import time
+import requests
 import uuid
 import logging
 import requests
@@ -54,6 +53,27 @@ class KeshetProvider(BaseProvider):
             self.get_channels()[0].url,
             prefer_http=True
         )
+    
+    def get_master_url_with_cache(self, ttl: int = 720) -> Optional[str]:
+        """
+        Get the master URL for the main Keshet channel with caching.
+        Makes a GET request only if the TTL has passed.
+        """
+        cache_key = "master_url"
+        
+        cached_url = self._get_from_cache(cache_key, ttl)
+        if cached_url:
+            self.logger.debug("Using cached master URL")
+            return cached_url
+
+        master_url = self.get_master_url()
+        mresp = requests.get(master_url, timeout=5)
+        if mresp.status_code != 200:
+            self.logger.error(f"Failed to fetch master URL: {master_url}")
+            return None
+
+        self._set_cache(cache_key, mresp)
+        return mresp
 
     @staticmethod
     def extract_first_variant(master_text: str) -> str:
