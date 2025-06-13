@@ -17,10 +17,6 @@ class Reshet13Provider(BaseProvider):
     
     # Channel 13 stream data
     CHANNEL_13_STREAMS = {
-        "13": {
-            "referer": "https://13tv.co.il/live/",
-            "link": "https://reshet.g-mana.live/media/87f59c77-03f6-4bad-a648-897e095e7360/mainManifest.m3u8"
-        },
         "13b": {
             "referer": "https://13tv.co.il/live/",
             "link": "https://d18b0e6mopany4.cloudfront.net/out/v1/2f2bc414a3db4698a8e94b89eaf2da2a/index.m3u8"

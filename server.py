@@ -86,17 +86,22 @@ def reshet13_only_playlist():
     return Response(m3u, mimetype='application/vnd.apple.mpegurl')
 
 
+from flask import request  # ensures we get the correct host/port dynamically
+
 TS_LINE_REGEX = re.compile(r'^(?!#)(.+\.ts)\s*$', re.MULTILINE)
 
 def rewrite_variant_for_ts(variant_text: str) -> str:
     """
-    Every line ending in “.ts” (that doesn’t start with “#”) is turned into:
-        /segments/<that-relative-path>
-    so that the client will call our /segments/<...> route for each .ts.
+    Every .ts line (not starting with "#") is rewritten to:
+        http://<host>/segments/<that-relative-path>
+    to bypass ffmpeg's security restrictions.
     """
+    base_url = request.host_url.rstrip('/')  # e.g. http://192.168.0.63:5000
+
     def _sub(match):
-        ts_rel = match.group(1).strip()
-        return f"/segments/{ts_rel}"
+        ts_rel = match.group(1).strip()  # e.g. "20241022T205724/.../file.ts"
+        return f"{base_url}/segments/{ts_rel}"
+    
     return TS_LINE_REGEX.sub(_sub, variant_text)
 
 
@@ -139,7 +144,7 @@ def proxy_segment(ts_path):
     try:
         # 1) Fetch master to get current “hdntl=…” prefix:
         master_url = keshet_provider.get_master_url()
-        mresp = keshet_provider.get_master_url_with_cache()
+        mresp = keshet_provider.get_master_url_with_cache(master_url = master_url)
 
         variant_rel = keshet_provider.extract_first_variant(mresp.text)
         
@@ -178,19 +183,27 @@ def proxy_segment(ts_path):
         traceback.print_exc()
         return abort(502)
 
-
 @app.route('/keshet_only.m3u8')
-def keshet_only_playlist():
-    # url_for('proxy_variant', _external=True) → "http://<host>:<port>/proxy"
-    proxy_url = url_for('proxy_variant', _external=True)
-    logger.info("Proxy URL for Keshet: %s", proxy_url)
+def keshet_iptv_playlist():
+    # This route is served for Jellyfin ffmpeg m3u8 implementation
+    master_url = url_for('keshet_only_only_playlist', _external=True)
     return Response(
         "#EXTM3U\n"
-        "#EXTINF:-1,Keshet 12\n"
-        f"{proxy_url}\n",
-        mimetype="audio/x-mpegurl"
+        '#EXTINF:-1 tvg-id="keshet12" tvg-name="Keshet 12" group-title="Live",Keshet 12\n'
+        f"{master_url}\n",
+        mimetype="application/vnd.apple.mpegurl"
     )
 
+@app.route('/keshet_iptv.m3u8')
+def keshet_only_only_playlist():
+    proxy_url = url_for('proxy_variant', _external=True)
+    return Response(
+        "#EXTM3U\n"
+        "#EXT-X-VERSION:3\n"
+        "#EXT-X-STREAM-INF:BANDWIDTH=800000,RESOLUTION=1280x720\n"
+        f"{proxy_url}\n",
+        mimetype="application/vnd.apple.mpegurl"
+    )
 
 @app.route('/kan_only.m3u8')
 def kan_only_playlist():
@@ -215,29 +228,6 @@ def kan_only_playlist():
             m3u += f'{ch.url}\n'
     
     return Response(m3u, mimetype='application/vnd.apple.mpegurl')
-
-
-# Alternative simple routes using the provider's built-in playlist generation
-@app.route('/kan_simple.m3u8')
-def kan_simple_playlist():
-    """Simple Kan playlist using provider's generate_playlist method"""
-    playlist = kan_provider.generate_playlist(prefer_http=True, include_vods=False)
-    return Response(playlist, mimetype='application/vnd.apple.mpegurl')
-
-
-@app.route('/keshet_simple.m3u8')
-def keshet_simple_playlist():
-    """Simple Keshet playlist using provider's generate_playlist method"""
-    playlist = keshet_provider.generate_playlist(prefer_http=True, include_vods=False)
-    return Response(playlist, mimetype='application/vnd.apple.mpegurl')
-
-
-@app.route('/reshet13_simple.m3u8')
-def reshet13_simple_playlist():
-    """Simple Reshet13 playlist using provider's generate_playlist method"""
-    playlist = reshet13_provider.generate_playlist(prefer_http=True, include_vods=False)
-    return Response(playlist, mimetype='application/vnd.apple.mpegurl')
-
 
 # ---------------------------------------------------------------------------
 
