@@ -24,7 +24,7 @@ MAKO_ENTITLEMENTS_SERVICES = 'https://mass.mako.co.il/ClicksStatistics/entitleme
 
 MAKO_USERNAME = os.environ.get('MAKO_USERNAME', '')
 MAKO_PASSWORD = os.environ.get('MAKO_PASSWORD', '')
-
+TTL_HOURS = 6 * 60 * 60 # when to fetch the Variant playlist again (expires after 24 hours)
 
 class KeshetProvider(BaseProvider):
     """Keshet (Mako) TV provider implementation."""
@@ -54,7 +54,7 @@ class KeshetProvider(BaseProvider):
             prefer_http=True
         )
     
-    def get_master_url_with_cache(self, ttl: int = 720) -> Optional[str]:
+    def get_master_url_with_cache(self, master_url, ttl: int = TTL_HOURS) -> Optional[str]:
         """
         Get the master URL for the main Keshet channel with caching.
         Makes a GET request only if the TTL has passed.
@@ -66,7 +66,6 @@ class KeshetProvider(BaseProvider):
             self.logger.debug("Using cached master URL")
             return cached_url
 
-        master_url = self.get_master_url()
         mresp = requests.get(master_url, timeout=5)
         if mresp.status_code != 200:
             self.logger.error(f"Failed to fetch master URL: {master_url}")

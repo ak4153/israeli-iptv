@@ -45,7 +45,7 @@ class BaseProvider(ABC):
     )
     
     # Cache settings
-    LINK_CACHE_TIME = 14 * 60  # 14 minutes for channel/VOD listings since Keshet is so dynamic
+    LINK_CACHE_TIME = 10 * 60   # 10 minutes for channel/VOD refetchin
     
     def __init__(self, provider_name: str):
         """
@@ -262,7 +262,7 @@ class BaseProvider(ABC):
         """
         cache_entry = self._link_cache.get(key)
         if cache_entry and self._is_cache_valid(cache_entry, self.LINK_CACHE_TIME):
-            self.logger.info(f"Cache hit for {key} in link cache")
+            self.logger.info(f"Cache hit for {key} in link cache for {cache_entry.get('url')}")
             return cache_entry.get('url')
         return None
     
