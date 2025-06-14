@@ -9,8 +9,12 @@ from kan_module import KanProvider
 from keshet_module import KeshetProvider
 from reshet13_module import Reshet13Provider
 
+# ---------------------------------------------------------------------------
+# Initialize Logging Sysyem and Logger
+# ---------------------------------------------------------------------------
+
 logging.basicConfig(level=logging.INFO,
-                    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+                    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s') # Example: Sat Jun 14 21:55:14 2025 - Israeli-IPTV - Info - User Logged in successfully
 logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
@@ -19,14 +23,15 @@ app = Flask(__name__)
 # Initialize Providers
 # ---------------------------------------------------------------------------
 
-kan_provider = KanProvider()
-keshet_provider = KeshetProvider()
-reshet13_provider = Reshet13Provider()
+kan_provider = KanProvider() # Sets up Kan Provider from Kan Module
+keshet_provider = KeshetProvider() # Sets up Keshet Provider from Keshet Module
+reshet13_provider = Reshet13Provider() # Sets up Reshet Provider from Reshet13 Module
 
 # ---------------------------------------------------------------------------
 # Routes
 # ---------------------------------------------------------------------------
 
+# Defines root route
 @app.route('/')
 def index():
     return (
@@ -39,9 +44,11 @@ def index():
     )
 
 
+# Defines reshet13 route
 @app.route('/reshet13_only.m3u8')
 def reshet13_only_playlist():
-    """Playlist with just Reshet 13 channels"""
+    """Playlist with Reshet 13 channels Only"""
+    
     # Use the provider's generate_playlist method
     playlist = reshet13_provider.generate_playlist(prefer_http=True, include_vods=False)
     
@@ -55,21 +62,23 @@ def reshet13_only_playlist():
     
     for ch in channels:
         # Resolve the URL
-        direct_url = reshet13_provider.resolve_url(ch.url, prefer_http=True)
+        direct_url = reshet13_provider.resolve_url(ch.url, prefer_http=True) # resolves conflicting URLs
         if direct_url:
             # Direct version
             m3u += (
                 f'#EXTINF:-1 tvg-id="{ch.id}" tvg-logo="{ch.logo}" '
                 f'group-title="Reshet 13",{ch.name} (Direct)\n'
             )
+            
             # Add headers
-            headers = reshet13_provider.get_headers(ch.id)
+            headers = reshet13_provider.get_headers(ch.id) # Headers are from channel
             if "User-Agent" in headers:
                 m3u += f'#EXTVLCOPT:http-user-agent={headers["User-Agent"]}\n'
             if "Referer" in headers:
                 m3u += f'#EXTVLCOPT:http-referrer={headers["Referer"]}\n'
             m3u += f'{direct_url}\n'
             
+            # Edge Case:
             # HTTP version (if different from direct)
             http_url = direct_url.replace("https://", "http://") if direct_url.startswith("https://") else direct_url
             if http_url != direct_url:
@@ -77,34 +86,39 @@ def reshet13_only_playlist():
                     f'#EXTINF:-1 tvg-id="{ch.id}" tvg-logo="{ch.logo}" '
                     f'group-title="Reshet 13",{ch.name} (HTTP)\n'
                 )
+                
+                # Add Headers
                 if "User-Agent" in headers:
                     m3u += f'#EXTVLCOPT:http-user-agent={headers["User-Agent"]}\n'
                 if "Referer" in headers:
                     m3u += f'#EXTVLCOPT:http-referrer={headers["Referer"]}\n'
                 m3u += f'{http_url}\n'
     
+    # Returns the generated response
     return Response(m3u, mimetype='application/vnd.apple.mpegurl')
 
 
-from flask import request  # ensures we get the correct host/port dynamically
+from flask import request  # ensures that we get the correct host/port dynamically
 
+# Generates and Compiles TS REGEX
 TS_LINE_REGEX = re.compile(r'^(?!#)(.+\.ts)\s*$', re.MULTILINE)
 
 def rewrite_variant_for_ts(variant_text: str) -> str:
     """
     Every .ts line (not starting with "#") is rewritten to:
-        http://<host>/segments/<that-relative-path>
-    to bypass ffmpeg's security restrictions.
+        "http://<host>/segments/<that-relative-path>"
+    to ensures that we bypass ffmpeg's security restrictions.
     """
-    base_url = request.host_url.rstrip('/')  # e.g. http://192.168.0.63:5000
+    base_url = request.host_url.rstrip('/')  # Example: http://192.168.0.63:5000
 
     def _sub(match):
-        ts_rel = match.group(1).strip()  # e.g. "20241022T205724/.../file.ts"
+        ts_rel = match.group(1).strip()  # Example: "20241022T205724/.../file.ts"
         return f"{base_url}/segments/{ts_rel}"
     
     return TS_LINE_REGEX.sub(_sub, variant_text)
 
 
+# Defines proxy route
 @app.route('/proxy')
 def proxy_variant():
     try:
@@ -139,6 +153,7 @@ def proxy_variant():
         return (f"Error in proxy_variant: {e}", 500)
 
 
+# Defines .ts route
 @app.route('/segments/<path:ts_path>')
 def proxy_segment(ts_path):
     try:
@@ -183,8 +198,11 @@ def proxy_segment(ts_path):
         traceback.print_exc()
         return abort(502)
 
+# Defines keshet route
 @app.route('/keshet_only.m3u8')
 def keshet_iptv_playlist():
+    """Playlist with just Keshet channels"""
+    
     # This route is served for Jellyfin ffmpeg m3u8 implementation
     master_url = url_for('keshet_only_only_playlist', _external=True)
     return Response(
@@ -194,6 +212,7 @@ def keshet_iptv_playlist():
         mimetype="application/vnd.apple.mpegurl"
     )
 
+# Defines keshet iptv route
 @app.route('/keshet_iptv.m3u8')
 def keshet_only_only_playlist():
     proxy_url = url_for('proxy_variant', _external=True)
@@ -208,6 +227,7 @@ def keshet_only_only_playlist():
 @app.route('/kan_only.m3u8')
 def kan_only_playlist():
     """Playlist with just Kan channels"""
+    
     # For Kan, we can use the simpler approach since URLs don't need resolution
     channels = kan_provider.get_channels()
     if not channels:
@@ -221,14 +241,18 @@ def kan_only_playlist():
                 f'#EXTINF:-1 tvg-id="{ch.id}" tvg-logo="{ch.logo}" '
                 f'group-title="Kan",{ch.name} (Direct)\n'
             )
+            
             # Add headers
             headers = kan_provider.get_headers()
             if "User-Agent" in headers:
                 m3u += f'#EXTVLCOPT:http-user-agent={headers["User-Agent"]}\n'
             m3u += f'{ch.url}\n'
     
+    # Returns generated response
     return Response(m3u, mimetype='application/vnd.apple.mpegurl')
 
+# ---------------------------------------------------------------------------
+# Main
 # ---------------------------------------------------------------------------
 
 if __name__ == '__main__':
@@ -238,6 +262,6 @@ if __name__ == '__main__':
     reshet13_count = len(reshet13_provider.get_channels())
     
     logger.info('Starting IPTV server loaded %d Kan channels, %d Keshet channels, %d Reshet 13 channels',
-                kan_count, keshet_count, reshet13_count)
+                kan_count, keshet_count, reshet13_count) # Logs the info
     
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=True) # Sets the IP and Runs it
