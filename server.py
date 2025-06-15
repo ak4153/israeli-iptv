@@ -367,7 +367,7 @@ def keshet_iptv_playlist() -> Response:
     # and the absolute URL to the dynamically generated Keshet 12 playlist.
     return Response(
         "#EXTM3U\n"
-        '#EXTINF:-1 tvg-id="keshet12" tvg-name="Keshet 12" group-title="Live",Keshet 12\n'
+        '#EXTINF:-1 tvg-id="keshet12" tvg-name="Keshet 12" tvg-logo="/logos/keshet12.png" group-title="Live",Keshet 12\n'
         f"{master_url}\n",
         mimetype="application/vnd.apple.mpegurl"
     )
