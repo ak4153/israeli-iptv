@@ -1,34 +1,34 @@
 # base_provider.py
-from abc import ABC, abstractmethod
-from typing import List, Dict, Optional, Any
-import logging
-import time
-from dataclasses import dataclass, field
+from abc import ABC, abstractmethod  # For creating abstract base classes
+from typing import List, Dict, Optional, Any  # For type hints
+import logging   # To add logging support for info/debugging
+import time  # used for caching logic(time stamps)
+from dataclasses import dataclass, field  # for simple data contaniers(Channel,VOD)
 
-# Set up logging
+# Set up logging for this module
 logger = logging.getLogger(__name__)
 
 @dataclass
 class Channel:
     """Data class representing a TV channel."""
-    id: str
-    name: str
-    url: str
-    logo: str = ""
-    provider: str = ""
-    group_title: str = ""
-    extra_data: Dict[str, Any] = field(default_factory=dict)
+    id: str       #Unique channel ID 
+    name: str       # Display Name
+    url: str         # Streaming URL
+    logo: str = ""       # Logo image URL
+    provider: str = ""    #Provider Name
+    group_title: str = ""   #Channel group title
+    extra_data: Dict[str, Any] = field(default_factory=dict)   #Any addittional info
 
 @dataclass
 class VOD:
     """Data class representing a Video On Demand item."""
-    id: str
-    name: str
-    url: str
-    poster: str = ""
-    provider: str = ""
-    description: str = ""
-    extra_data: Dict[str, Any] = field(default_factory=dict)
+    id: str   # Unique VOD ID 
+    name: str  # VOD title
+    url: str    # VOD playback URL
+    poster: str = ""  # Poster image URL
+    provider: str = ""  # VOD provider name
+    description: str = ""  # Description or summary of VOD
+    extra_data: Dict[str, Any] = field(default_factory=dict)  # Extra metadata
 
 class BaseProvider(ABC):
     """
@@ -56,10 +56,8 @@ class BaseProvider(ABC):
         """
         self.provider_name = provider_name
         self.logger = logging.getLogger(f"{__name__}.{provider_name}")
-        
-        # Initialize caches
-        self._cache: Dict[str, Dict[str, Any]] = {}
-        self._link_cache: Dict[str, Dict[str, Any]] = {}
+        self._cache: Dict[str, Dict[str, Any]] = {}   # General cache
+        self._link_cache: Dict[str, Dict[str, Any]] = {}   # Streaming URL cache
     
     @abstractmethod
     def get_channels(self) -> List[Channel]:
@@ -127,6 +125,8 @@ class BaseProvider(ABC):
         # Build the EXTINF line
         extinf_parts = ["#EXTINF:-1"]
         
+        
+        # Add metadata like id, logo, group
         if channel.id:
             extinf_parts.append(f'tvg-id="{channel.id}"')
         if channel.logo:
@@ -136,6 +136,7 @@ class BaseProvider(ABC):
         elif self.provider_name:
             extinf_parts.append(f'group-title="{self.provider_name.title()}"')
         
+        # Format EXTINF line with channel name
         entry = f"{' '.join(extinf_parts)},{channel.name}\n"
         
         # Add headers if requested
