@@ -61,14 +61,14 @@ Create or add to your existing `docker-compose.yml`:
 services:
   iptv:
     build:
-      context: ./iptv
+      context: .
       dockerfile: Dockerfile
     container_name: israeli-iptv-server
     restart: unless-stopped
     ports:
       - "5000:5000"
     volumes:
-      - ./iptv:/app
+      - .:/app
     # networks:
     #   - media-network
 ```
