@@ -37,7 +37,13 @@ This is a lightweight, containerized server that serves `.m3u8` playlist files l
 
 ### 📋 Installation Steps
 
-#### Method 1: Docker Build (Recommended)
+#### Method 1: Use pre-build Docker image (Recommended)
+
+```bash
+docker run -p 5000:5000 gchr.io/ak4153/israeli-iptv:latest
+```
+
+#### Method 2: Docker Build (for development)
 
 ```bash
 # Clone the repository
@@ -53,22 +59,27 @@ docker build -t israeli-tv-server .
 docker run -p 5000:5000 israeli-tv-server
 ```
 
-#### Method 2: Docker Compose (For Advanced Users)
+#### Method 3: Docker Compose (For Advanced Users)
 
 Create or add to your existing `docker-compose.yml`:
 
 ```yaml
 services:
   iptv:
-    build:
-      context: ./iptv
-      dockerfile: Dockerfile
+    image: "gchr.io/ak4153/israeli-iptv:latest"
+    # Or - for developers
+    # build:
+    #   context: .
+    #   dockerfile: Dockerfile
+
     container_name: israeli-iptv-server
     restart: unless-stopped
     ports:
       - "5000:5000"
-    volumes:
-      - ./iptv:/app
+    # For developers
+    # volumes:
+    #   - .:/app
+
     # networks:
     #   - media-network
 ```
