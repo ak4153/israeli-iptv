@@ -7,7 +7,7 @@ import logging
 import requests
 from urllib.parse import quote_plus, unquote_plus, parse_qs
 from typing import List, Optional, Dict, Any
-
+import time
 from base_provider import BaseProvider, Channel, VOD
 
 logger = logging.getLogger(__name__)
@@ -36,7 +36,7 @@ class KeshetProvider(BaseProvider):
         self.entitlements_services = MAKO_ENTITLEMENTS_SERVICES
         self.username = MAKO_USERNAME
         self.password = MAKO_PASSWORD
-        
+        self.session = requests.Session()
         # Additional caches specific to Keshet
         self._build_id_cache: Dict[str, Any] = {}
     
@@ -73,7 +73,23 @@ class KeshetProvider(BaseProvider):
 
         self._set_cache(cache_key, mresp)
         return mresp
-
+    
+    def get_headers(self) -> Dict[str, str]:
+        """Get required headers for requests."""
+        return {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36',
+            'Accept': 'text/html,application/xhtml+xml,application/json,application/xml;q=0.9,image/webp,*/*;q=0.8',
+            'Accept-Language': 'en-US,en;q=0.5',
+            'Accept-Encoding': 'gzip, deflate, br',
+            'Connection': 'keep-alive',
+            'Referer': 'https://www.mako.co.il/',
+            'Sec-Fetch-Dest': 'document',
+            'Sec-Fetch-Mode': 'navigate', 
+            'Sec-Fetch-Site': 'same-origin',
+            'Sec-Fetch-User': '?1',
+            'DNT': '1'
+        }
+    
     @staticmethod
     def extract_first_variant(master_text: str) -> str:
         m = re.search(r'^(?!#)(.*index_2200\.m3u8)\s*$', master_text, re.MULTILINE)
@@ -82,10 +98,16 @@ class KeshetProvider(BaseProvider):
         return m.group(1).strip()
 
     def _get(self, url: str, timeout: int = 30) -> Optional[requests.Response]:
-        """Fetch URL with error handling."""
+        """Fetch URL with error handling and retry logic."""
         try:
             headers = self.get_headers()
-            r = requests.get(url, headers=headers, timeout=timeout)
+            
+            r = self.session.get(url, headers=headers, timeout=timeout)
+            
+            if 'Radware' in r.text:
+                time.sleep(2)
+                
+                r = self.session.get(url, headers=headers, timeout=timeout)
             r.raise_for_status()
             return r
         except Exception as exc:
@@ -206,7 +228,6 @@ class KeshetProvider(BaseProvider):
         # Add responsive platform param to get JSON
         params_url = f"{url}?{self.endings}" if "?" not in url else f"{url}&{self.endings}"
         params = self._get_json(params_url)
-        
         if params is None or len(params) < 1:
             self.logger.error(f"Failed to get params from {params_url}")
             return None
@@ -239,7 +260,6 @@ class KeshetProvider(BaseProvider):
             vcmid = parts.get('vcmid', [''])[0]
             if not vcmid and 'vcmid=' in url_params:
                 vcmid = url_params[url_params.find('vcmid=')+6: url_params.find('&videoChannelId=')]
-                
             video_channel_id = parts.get('videoChannelId', [''])[0]
             if not video_channel_id and 'videoChannelId=' in url_params:
                 video_channel_id = url_params[url_params.find('&videoChannelId=')+16:]
@@ -248,7 +268,6 @@ class KeshetProvider(BaseProvider):
                 self.logger.error(f"Could not extract vcmid or videoChannelId from {url_params}")
                 return None
             
-            self.logger.debug(f"Extracted vcmid: {vcmid}, videoChannelId: {video_channel_id}")
             
             # Get media info
             ajax_url = (
@@ -260,7 +279,6 @@ class KeshetProvider(BaseProvider):
             r = self._get(ajax_url)
             if not r:
                 return None
-                
             media_info = r.json()
             if 'media' not in media_info:
                 self.logger.error("No media in response")
