@@ -36,7 +36,6 @@ class KeshetProvider(BaseProvider):
         self.entitlements_services = MAKO_ENTITLEMENTS_SERVICES
         self.username = MAKO_USERNAME
         self.password = MAKO_PASSWORD
-        self.session = requests.Session()
         # Additional caches specific to Keshet
         self._build_id_cache: Dict[str, Any] = {}
     
@@ -101,13 +100,13 @@ class KeshetProvider(BaseProvider):
         """Fetch URL with error handling and retry logic."""
         try:
             headers = self.get_headers()
-            
-            r = self.session.get(url, headers=headers, timeout=timeout)
+            session = requests.Session()
+            r = session.get(url, headers=headers, timeout=timeout)
             
             if 'Radware' in r.text:
                 time.sleep(2)
                 
-                r = self.session.get(url, headers=headers, timeout=timeout)
+                r = session.get(url, headers=headers, timeout=timeout)
             r.raise_for_status()
             return r
         except Exception as exc:
